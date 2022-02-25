@@ -11,7 +11,7 @@ enum channel{RED, GREEN, BLUE, GREY=RED, GRAY=GREY};
 
 struct imageData
 {
-   vector<int>  redChannel, greenChannel, blueChannel; 
+   vector<double>  redChannel, greenChannel, blueChannel; 
    int numRows, numColumns; 
 };
 
@@ -39,13 +39,17 @@ public:
    int getPixel(const int row, const int col, const int rgb);
    int getNumberOfRows();
    int getNumberOfColumns(); 
-   vector<int>* getChannel(int rgb);
+   vector<double>* getChannel(int rgb);
    
-   bool setChannel(int rgb, vector<int> &channel);   
+   bool setChannel(int rgb, vector<double> &channel);   
    bool save (char* file);
    bool save (const char* file);
    bool read (char* file);
    bool isInbounds (const int row, const int col);
+
+   // My crap
+   void setAll(int,int,int);
+   image& operator+=(image&);
 
 
 };

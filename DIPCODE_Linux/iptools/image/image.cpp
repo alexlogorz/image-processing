@@ -63,6 +63,39 @@ void image::copyImage(image &img)
 	}
 }
 
+image& image::operator+=(image& right) {
+
+	//cout << "\nin operator += overload" << endl; //debug
+
+	image temp = *this;
+	int rows, color = 128;
+
+	if(this->data.numRows < right.data.numRows)
+		rows = right.data.numRows;
+	else
+		rows = this->data.numRows;
+
+	//double graypad = (double)(this->data.numColumns + right.getNumberOfColumns()) * 0.02;
+	int graypad = 20;
+
+	this->resize(rows, this->data.numColumns + right.getNumberOfColumns() + graypad);
+
+	for(int i = 0; i < temp.data.numRows; ++i)
+		for(int j = 0; j < temp.data.numColumns; ++j)
+			this->setPixel(i,j,temp.getPixel(i,j)), this->setPixel(i,j,GREEN,temp.getPixel(i,j,GREEN)), this->setPixel(i,j,BLUE,temp.getPixel(i,j,BLUE));
+
+	for(int i = 0; i < this->data.numRows; ++i) {
+		for(int j = temp.data.numColumns; j < temp.data.numColumns + graypad; ++j) {
+			this->setAll(i,j,color);
+		}
+	}
+
+	for(int i = 0; i < right.data.numRows; ++i)
+		for(int j = temp.data.numColumns + graypad; j < this->data.numColumns; ++j)
+			this->setPixel(i,j,right.getPixel(i,j-temp.data.numColumns)), this->setPixel(i,j,GREEN,right.getPixel(i,j-temp.data.numColumns,GREEN)), this->setPixel(i,j,BLUE,right.getPixel(i,j-temp.data.numColumns,BLUE));
+
+	return *this;
+}
 
 /*-----------------------------------------------------------------------**/
 void image::resize (int rows, int columns)
@@ -143,7 +176,7 @@ int image::getNumberOfColumns ()
 
 
 /*-----------------------------------------------------------------------**/
-vector<int>* image::getChannel (int rgb) 
+vector<double>* image::getChannel (int rgb) 
 {
 	switch (rgb) {
 		case RED:
@@ -158,7 +191,7 @@ vector<int>* image::getChannel (int rgb)
 	}
 }
 	/*-----------------------------------------------------------------------**/
-bool image::setChannel (int rgb, vector<int> &channel)
+bool image::setChannel (int rgb, vector<double> &channel)
 {
 	if (channel.size() == this->getChannel(rgb)->size())
 	{
@@ -167,6 +200,14 @@ bool image::setChannel (int rgb, vector<int> &channel)
 	}
 	return false;
 }
+
+void image::setAll(int i, int j, int val) {
+
+	this->setPixel(i,j,val);
+	this->setPixel(i,j,GREEN,val);
+	this->setPixel(i,j,BLUE,val);
+}
+
 
 
 /*-------------------------------------------------------------------*/

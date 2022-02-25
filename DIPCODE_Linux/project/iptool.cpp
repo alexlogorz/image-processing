@@ -40,6 +40,7 @@ int main (int argc, char** argv)
 		exit(1);
 	}
 
+	int line_counter = 0;
 	while(fgets(str,MAXLEN,fp) != NULL) {
 		pch = strtok(str, " "); //ipf
 		src.read(pch);
@@ -54,6 +55,8 @@ int main (int argc, char** argv)
 			printf("at most 3 rois allowed");
 			exit(1);
 		}
+
+		line_counter++;
 
 		//get the roi configurations
 		for(int i = 0; i < roiCount; i++) {
@@ -74,12 +77,14 @@ int main (int argc, char** argv)
 				tmp.threshold = atoi(pch);
 				pch = strtok(NULL, " "); //intensity
 				tmp.intensity = atoi(pch);
+				tmp.channel = 0;
 				
 			}
 			else if(strncasecmp(pch,"reg2dsmooth", MAXLEN) == 0) {
 				tmp.name = 1;
 				pch = strtok(NULL, " "); //ws
 				tmp.ws = atoi(pch);
+				tmp.channel = 0;
 			}
 			else if(strncasecmp(pch,"colorbright", MAXLEN) == 0) {
 				tmp.name = 2;
@@ -89,16 +94,19 @@ int main (int argc, char** argv)
 				tmp.dg = atof(pch);
 				pch = strtok(NULL, " "); //db
 				tmp.db = atof(pch);
+				tmp.channel = 0;
 			}
 			else if(strncasecmp(pch,"add", MAXLEN) == 0) {
 				tmp.name = 3;
 				pch = strtok(NULL, " "); //value
 				tmp.value = atoi(pch);
+				tmp.channel = 0;
 			}
 			else if(strncasecmp(pch,"binarize", MAXLEN) == 0) {
 				tmp.name = 4;
 				pch = strtok(NULL, " "); //thresh
 				tmp.threshold = atoi(pch);
+				tmp.channel = 0;
 			}
 			else if(strncasecmp(pch,"histostretch", MAXLEN) == 0) {
 				tmp.name = 5;
@@ -106,17 +114,63 @@ int main (int argc, char** argv)
 				tmp.A = atoi(pch);
 				pch = strtok(NULL, " "); //B
 				tmp.B = atoi(pch);
+				tmp.channel = 0;
 			}
 			else if(strncasecmp(pch,"histothres", MAXLEN) == 0) {
 				tmp.name = 6;
 				pch = strtok(NULL, " "); //threshold
 				tmp.threshold = atoi(pch);
 				pch = strtok(NULL, " "); //background or foreground
-				tmp.beta = strcasecmp(pch, "B") ? 0 : 1;
+				tmp.beta = strcasecmp(pch, "B") ? 1 : 0;
 				pch = strtok(NULL, " "); //A
 				tmp.A = atoi(pch);
 				pch = strtok(NULL, " "); //B
 				tmp.B = atoi(pch);
+				tmp.channel = 0;
+			}
+			else if(strncasecmp(pch,"althistostretch", MAXLEN) == 0) {
+				tmp.name = 7;
+				pch = strtok(NULL, " "); //A
+				tmp.A = atoi(pch);
+				pch = strtok(NULL, " "); //B
+				tmp.B = atoi(pch);
+				tmp.channel = 0;
+			}
+			else if(strncasecmp(pch,"colorstretch", MAXLEN) == 0) {
+				tmp.name = 8;
+				pch = strtok(NULL, " "); // Channel
+				if(strncasecmp(pch,"R", 1) == 0){
+					tmp.channel = 0;
+				}
+				else if(strncasecmp(pch,"G", 1) == 0){
+					tmp.channel = 1;
+				}
+				else if(strncasecmp(pch,"B", 1) == 0){
+					tmp.channel = 2;
+				}
+
+				pch = strtok(NULL, " "); //A
+				tmp.A = atoi(pch);
+				pch = strtok(NULL, " "); //B
+				tmp.B = atoi(pch);
+			}
+			else if(strncasecmp(pch,"hsistretch", MAXLEN) == 0) {
+				tmp.name = 9;
+				pch = strtok(NULL, " "); // Channel
+				if(strncasecmp(pch,"H", 1) == 0){
+					tmp.channel = 0;
+				}
+				else if(strncasecmp(pch,"S", 1) == 0){
+					tmp.channel = 1;
+				}
+				else if(strncasecmp(pch,"I", 1) == 0){
+					tmp.channel = 2;
+				}
+
+				pch = strtok(NULL, " "); //A
+				tmp.A = atof(pch);
+				pch = strtok(NULL, " "); //B
+				tmp.B = atof(pch);
 			}
 			else {
 				printf("function %s not found", pch);
@@ -134,6 +188,26 @@ int main (int argc, char** argv)
 
 		tgt.copyImage(src);
 
+		// //Check rois overlap
+		// for(int o = 0; o < 3; o++){
+		// 	int xs = rois[o].x1;
+		// 	int xw = rois[o].sx1;
+		// 	int ys = rois[o].y1;
+		// 	int yw = rois[o].sy1;
+
+		// 	for(int p = o+1; p < 3; p++){
+		// 		int xs2 = rois[p].x1;
+		// 		int xw2 = rois[p].sx1;
+		// 		int ys2 = rois[p].y1;
+		// 		int yw2 = rois[p].sy1;
+
+		// 		if( ((xs > xs2) || ((xs+xw) < (xs2+xw2))) && ((ys > ys2) || ((ys+yw) < (ys2+yw2))) ){
+		// 			cout << "Overlaping ROIs: " << o << ", " << p << " on line " << line_counter << endl;
+
+		// 		}
+		// 	}
+		}
+
 		for(int k = roiCount; k > 0; k--) {
 			if(rois[k - 1].name == 0) {
 				utility::colorvisual(src, tgt, rois[k - 1]);
@@ -150,11 +224,44 @@ int main (int argc, char** argv)
 				utility::binarize(src, tgt, rois[k - 1]);
 			}
 			else if(rois[k - 1].name == 5) {
-				utility::histostretch(src, tgt, rois[k - 1]);
+				string outfile_hist(outfile);
+				outfile_hist.append("-histogram_roi-");
+				outfile_hist.append(to_string(k));
+				outfile_hist.append(".pgm");
+				utility::histostretch(src, tgt, rois[k - 1], outfile_hist);
 			}
 			else if(rois[k - 1].name == 6) {
-				utility::histothres(src, tgt, rois[k - 1]);
+				string outfile_hist(outfile);
+				outfile_hist.append("-histogram_roi-");
+				outfile_hist.append(to_string(k));
+				outfile_hist.append(".pgm");
+				utility::histothres(src, tgt, rois[k - 1], outfile_hist);
 			}
+			else if(rois[k - 1].name == 7) {
+				string outfile_hist(outfile);
+				outfile_hist.append("-histogram_roi-");
+				outfile_hist.append(to_string(k));
+				outfile_hist.append(".pgm");
+				utility::althistostretch(src, tgt, rois[k - 1], outfile_hist);
+				// hist.save(outfile_hist);
+				// cout << outfile_hist << endl;
+			}
+
+			else if(rois[k - 1].name == 8) {
+				string outfile_hist(outfile);
+				outfile_hist.append("-histogram_roi-");
+				outfile_hist.append(to_string(k));
+				outfile_hist.append(".pgm");
+				utility::colorstretch(src, tgt, rois[k - 1], outfile_hist);
+			}
+			else if(rois[k - 1].name == 9) {
+				string outfile_hist(outfile);
+				outfile_hist.append("-grey_lvl_roi-");
+				outfile_hist.append(to_string(k));
+				outfile_hist.append(".pgm");
+				utility::hsistretch(src, tgt, rois[k - 1], outfile_hist);
+			}
+			
 		}
 
 		tgt.save(outfile);
