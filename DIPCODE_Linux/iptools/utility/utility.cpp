@@ -126,7 +126,7 @@ void utility::colorbright(image &src, image &tgt, struct ROI roi) {
 }
 
 /*-----------------------------------------------------------------------**/
-void utility::histostretch(image &src, image &tgt, struct ROI roi, string& outfile_hist) {
+void utility::histostretch(image &src, image &tgt, struct ROI roi, std::string& outfile_hist) {
 // tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	int min = findMin(src, roi);
 	int max = findMax(src, roi);
@@ -152,7 +152,7 @@ void utility::histostretch(image &src, image &tgt, struct ROI roi, string& outfi
 	histImage(hist_before, hist_after, outfile_hist);
 }
 
-void utility::colorstretch(image &src, image &tgt, struct ROI roi, string& outfile_hist) {
+void utility::colorstretch(image &src, image &tgt, struct ROI roi, std::string& outfile_hist) {
 
 	int min = findMin(src, roi);
 	int max = findMax(src, roi);
@@ -283,7 +283,6 @@ void utility::convertRGB(image &img, image &tgt, struct ROI roi)
 	double R, G, B;
 	double h, s, ii;
 	double H, S, I;
-	double temp, tmp;
 
 	for(int i = 0; i < img.getNumberOfRows(); i++){
 		for(int j = 0; j < img.getNumberOfColumns(); j++){
@@ -296,106 +295,39 @@ void utility::convertRGB(image &img, image &tgt, struct ROI roi)
 				s = S / 100.0;
 				ii = I / 255.0;
 
-				// if(h >= 0 && h < (2*M_PI/3.0)){
-				// 	b = ii * (1.0 - s);
-				// 	r = ii * (1.0 + (s*cos(h))/(cos(M_PI/(3.0-h))));
-				// 	g = 3.0*ii - (b+r);
-				// }
-
-				// else if(h >= (2*M_PI/3.0) && h < (4*M_PI/3.0)){
-				// 	h = h - (2.0*M_PI/3.0);
-				// 	r = ii * (1.0 - s);
-				// 	g = ii * (1.0 + (s*cos(h))/(cos(M_PI/(3.0-h))));
-				// 	b = 3.0*ii - (g+r);
-				// }
-
-				// else if(h >= (4*M_PI/3.0) && h < (2*M_PI)){
-				// // else {
-				// 	h = h - (4.0*M_PI/3.0);
-				// 	g = ii * (1.0 - s);
-				// 	b = ii * (1.0 + (s*cos(h))/(cos(M_PI/(3.0-h))));
-				// 	r = 3.0*ii - (b+g);
-				// }
-
-				if(H < 120 && H >= 0) {
-				
-					b = (int)I*(1.0-s);
-
-					temp = 1.0 + ((s * cos(H * M_PI / 180.0)) / (cos((60-H) * M_PI / 180.0)));
-					temp *= I;
-					r = (int)temp;
-
-					tmp = 3*I - r - b;
-					g = tmp;
+				if(h >= 0 && h < 2*M_PI/3.0){
+					b = ii * (1.0 - s);
+					r = ii * (1.0 + s*cos(h)/cos(M_PI/3.0-h));
+					g = 3.0*ii - (b+r);
 				}
 
-				else if(H < 240 && H >= 120) {
-
-					H -= 120;
-
-					// this->setPixel(i,j,RED,(int)I*(1.0-s));
-
-					// temp = 1.0 + ((s * cos(H * M_PI / 180.0)) / (cos((60-H) * M_PI / 180.0)));
-					// temp *= it;
-					// this->setPixel(i,j,GREEN,(int)temp);
-
-					// tmp = 3*it - this->getPixel(i,j,RED) - this->getPixel(i,j,GREEN);
-					// this->setPixel(i,j,BLUE,tmp);
-
-					r = (int)I*(1.0-s);
-
-					temp = 1.0 + ((s * cos(H * M_PI / 180.0)) / (cos((60-H) * M_PI / 180.0)));
-					temp *= I;
-					g = (int)temp;
-
-					tmp = 3*I - r - g;
-					b = tmp;
+				else if(h >= 2*M_PI/3.0 && h < 4*M_PI/3.0){
+					h = h - 2.0*M_PI/3.0;
+					r = ii * (1.0 - s);
+					g = ii * (1.0 + s*cos(h)/cos(M_PI/3.0-h));
+					b = 3.0*ii - (g+r);
 				}
 
-				else if(H <= 360 && H >= 240) {
-
-					H -= 240;
-
-					// this->setPixel(i,j,GREEN,(int)it*(1.0-s));
-
-					// temp = 1.0 + ((s * cos(H * M_PI / 180.0)) / (cos((60-H) * M_PI / 180.0)));
-					// temp *= it;
-					// this->setPixel(i,j,BLUE,(int)temp);
-
-					// tmp = 3*it - this->getPixel(i,j,GREEN) - this->getPixel(i,j,BLUE);
-					// this->setPixel(i,j,RED,tmp);
-
-					g = (int)I*(1.0-s);
-
-					temp = 1.0 + ((s * cos(H * M_PI / 180.0)) / (cos((60-H) * M_PI / 180.0)));
-					temp *= I;
-					b = (int)temp;
-
-					tmp = 3*I - g - b;
-					r = tmp;
+				else if(h >= 4*M_PI/3.0 && h < 2*M_PI){
+					h = h - 4.0*M_PI/3.0;
+					g = ii * (1.0 - s);
+					b = ii * (1.0 + s*cos(h)/cos(M_PI/3.0-h));
+					r = 3.0*ii - (b+g);
 				}
-
-
 
 				R = int(r*255);
 				G = int(g*255);
 				B = int(b*255);
 
-				// tgt.setPixel(i, j, 0, checkValue(R));
-				// tgt.setPixel(i, j, 1, checkValue(G));
-				// tgt.setPixel(i, j, 2, checkValue(B));
-				tgt.setPixel(i, j, 0, checkValue(r));
-				tgt.setPixel(i, j, 1, checkValue(g));
-				tgt.setPixel(i, j, 2, checkValue(b));
-				// cout << R << " " << G << " " << B << endl;
-				// cout << r << " " << g << " " << b << endl;
-				// cout << endl;
+				tgt.setPixel(i, j, 0, checkValue(R));
+				tgt.setPixel(i, j, 1, checkValue(G));
+				tgt.setPixel(i, j, 2, checkValue(B));
 			}
 		}
 	}
 }
 
-void utility::hsistretch(image &src, image &tgt, struct ROI roi, string& outfile_hist) {
+void utility::hsistretch(image &src, image &tgt, struct ROI roi, std::string& outfile_hist) {
 
 	// Convert to hsi
 	image hsi_src, hsi_tgt, grey_lvl;
@@ -423,7 +355,7 @@ void utility::hsistretch(image &src, image &tgt, struct ROI roi, string& outfile
 	// convertRGB(hsi_src, tgt, roi);
 }
 
-void utility::althistostretch(image &src, image &tgt, struct ROI roi, string& outfile_hist) {
+void utility::althistostretch(image &src, image &tgt, struct ROI roi, std::string& outfile_hist) {
 // tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	int min = int(findMin(src, roi) * 1.05);
 	int max = int(findMax(src, roi) * 0.95);
@@ -455,7 +387,7 @@ void utility::althistostretch(image &src, image &tgt, struct ROI roi, string& ou
 	histImage(hist_before, hist_after, outfile_hist);
 }
 
-void utility::histImage(int hbefore[256],int hafter[256],string& fname) {
+void utility::histImage(int hbefore[256],int hafter[256], std::string& fname) {
 	//normalize hist array;
 	int maxbef = 0, maxaft = 0, minbef, minaft;
 
@@ -520,7 +452,7 @@ void utility::histImage(int hbefore[256],int hafter[256],string& fname) {
 }
 
 /*-----------------------------------------------------------------------**/
-void utility::histothres(image &src, image &tgt, struct ROI roi, string& outfile_hist) {
+void utility::histothres(image &src, image &tgt, struct ROI roi, std::string& outfile_hist) {
 // tgt.resize(src.getNumberOfRows(), src.getNumberOfColumns());
 	int min = findMin(src, roi);
 	int max = findMax(src, roi);

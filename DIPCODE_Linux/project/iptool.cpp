@@ -34,6 +34,7 @@ int main (int argc, char** argv)
 	char *pch;
 	int roiCount;
 	struct ROI rois[3];
+	stringstream buffer;
 
 	if ((fp = fopen(argv[1],"r")) == NULL) {
 		fprintf(stderr, "Can't open file: %s\n", argv[1]);
@@ -188,24 +189,23 @@ int main (int argc, char** argv)
 
 		tgt.copyImage(src);
 
-		// //Check rois overlap
-		// for(int o = 0; o < 3; o++){
-		// 	int xs = rois[o].x1;
-		// 	int xw = rois[o].sx1;
-		// 	int ys = rois[o].y1;
-		// 	int yw = rois[o].sy1;
+		//Check rois overlap
+		for(int o = 0; o < roiCount; o++){
+			int x1a = rois[o].x1;
+			int x2a = x1a + rois[o].sx1;
+			int y1a = rois[o].y1;
+			int y2a = y1a + rois[o].sy1;
 
-		// 	for(int p = o+1; p < 3; p++){
-		// 		int xs2 = rois[p].x1;
-		// 		int xw2 = rois[p].sx1;
-		// 		int ys2 = rois[p].y1;
-		// 		int yw2 = rois[p].sy1;
+			for(int p = o+1; p < roiCount; p++){
+				int x1b = rois[p].x1;
+				int x2b = x1b + rois[p].sx1;
+				int y1b = rois[p].y1;
+				int y2b = y1b + rois[p].sy1;
 
-		// 		if( ((xs > xs2) || ((xs+xw) < (xs2+xw2))) && ((ys > ys2) || ((ys+yw) < (ys2+yw2))) ){
-		// 			cout << "Overlaping ROIs: " << o << ", " << p << " on line " << line_counter << endl;
-
-		// 		}
-		// 	}
+				if(!(x1a >= x2b || x1b >= x2a) && !(y2a <= y1b || y2b <= y1a)){
+					cout << "Overlaping ROIs: " << o+1 << ", " << p+1 << " on line " << line_counter << endl;
+				}
+			}
 		}
 
 		for(int k = roiCount; k > 0; k--) {
@@ -226,21 +226,27 @@ int main (int argc, char** argv)
 			else if(rois[k - 1].name == 5) {
 				string outfile_hist(outfile);
 				outfile_hist.append("-histogram_roi-");
-				outfile_hist.append(to_string(k));
+				buffer << k; //streamstream to convert to string
+				outfile_hist.append(buffer.str());
+				buffer.str(""); //clear
 				outfile_hist.append(".pgm");
 				utility::histostretch(src, tgt, rois[k - 1], outfile_hist);
 			}
 			else if(rois[k - 1].name == 6) {
 				string outfile_hist(outfile);
 				outfile_hist.append("-histogram_roi-");
-				outfile_hist.append(to_string(k));
+				buffer << k; //streamstream to convert to string
+				outfile_hist.append(buffer.str());
+				buffer.str(""); //clear
 				outfile_hist.append(".pgm");
 				utility::histothres(src, tgt, rois[k - 1], outfile_hist);
 			}
 			else if(rois[k - 1].name == 7) {
 				string outfile_hist(outfile);
 				outfile_hist.append("-histogram_roi-");
-				outfile_hist.append(to_string(k));
+				buffer << k; //streamstream to convert to string
+				outfile_hist.append(buffer.str());
+				buffer.str(""); //clear
 				outfile_hist.append(".pgm");
 				utility::althistostretch(src, tgt, rois[k - 1], outfile_hist);
 				// hist.save(outfile_hist);
@@ -250,14 +256,18 @@ int main (int argc, char** argv)
 			else if(rois[k - 1].name == 8) {
 				string outfile_hist(outfile);
 				outfile_hist.append("-histogram_roi-");
-				outfile_hist.append(to_string(k));
+				buffer << k; //streamstream to convert to string
+				outfile_hist.append(buffer.str());
+				buffer.str(""); //clear
 				outfile_hist.append(".pgm");
 				utility::colorstretch(src, tgt, rois[k - 1], outfile_hist);
 			}
 			else if(rois[k - 1].name == 9) {
 				string outfile_hist(outfile);
 				outfile_hist.append("-grey_lvl_roi-");
-				outfile_hist.append(to_string(k));
+				buffer << k; //streamstream to convert to string
+				outfile_hist.append(buffer.str());
+				buffer.str(""); //clear
 				outfile_hist.append(".pgm");
 				utility::hsistretch(src, tgt, rois[k - 1], outfile_hist);
 			}

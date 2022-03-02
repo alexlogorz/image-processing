@@ -16,7 +16,7 @@ iptools:
 	(cd ../iptools; make)
 
 clean:
-	$(RM) $(BIN_DIR)$(EXEC); make all
+	$(RM) $(BIN_DIR)$(EXEC); rm -f ../lib/libiptools.a ../iptools/image/image.o ../iptools/utility/utility.o  #make all
 
 DO_EXEC = g++ -o $(BIN_DIR)$@ $@.cpp -L ../lib -l iptools
 

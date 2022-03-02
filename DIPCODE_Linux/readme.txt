@@ -39,6 +39,18 @@ otherwise  pixels  remain  unchanged
 
 6. reg2dsmooth: performs a basic uniform smoothing by averaging the pixels within a mask
 
+7. histostretch: performs contrast enhancment by stretching pixels from C, D to A, B
+
+8. althistostretch: same as above but uses the 5th and 95th percentile.
+
+9. histostretch: seperates the background and foreground by thresholding and stretches on or the other.
+
+10. colorstretch: stretches the RGB channels independantly from A to B.
+
+11. hsistretch: same as colorstretch but it stretches HSI independently from A to B.
+
+12. rgbtohsi applies the formulas that convert the RGB channels to HSI.
+
 *** PARAMETERS FILE ***
 
 Parameters format:

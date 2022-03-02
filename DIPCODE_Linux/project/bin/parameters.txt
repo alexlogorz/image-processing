@@ -1,11 +1,11 @@
-flowers.ppm flowers_bright.ppm 2 0 0 101 101 colorbright 0.5 0.9 2.1 100 100 100 100 colorbright 1.5 1 1
+flowers.ppm flowers_bright.ppm 2 0 0 100 100 colorbright 0.5 0.9 2.1 100 100 100 100 colorbright 1.5 1 1
 baboon.pgm baboon_histostretch.pgm 1 0 0 200 200 histostretch 0 255
 baboon.pgm baboon_althistostretch.pgm 1 100 100 300 300 althistostretch 0 255
 baboon.pgm baboon_histothres.pgm 2 0 0 200 200 histothres 256 B 0 255 200 200 200 200 histothres 0 F 0 255
 flowers.ppm flowers_colorstretch.ppm 3 0 0 150 150 colorstretch R 100 150 0 150 150 150 colorstretch G 100 150 150 0 150 150 colorstretch B 100 150
 flowers.ppm flowers_colorstretch_all.ppm 3 0 0 374 499 colorstretch R 100 150 0 0 374 499 colorstretch G 100 150 0 0 374 499 colorstretch B 100 150
 flowers.ppm flowers_colorstretch_whole.ppm 1 0 0 374 499 colorstretch G 100 150
-flowers.ppm flowers_hsistretch_I.ppm 1 0 0 374 499 hsistretch I 20 180
+flowers.ppm flowers_hsistretch_I.ppm 1 0 0 374 499 hsistretch I 60 255
 flowers.ppm flowers_hsistretch_H.ppm 1 0 0 374 499 hsistretch H 50 200
 flowers.ppm flowers_hsistretch_S.ppm 1 0 0 374 499 hsistretch S 40 60
 flowers.ppm flowers_hsistretch_ALL.ppm 3 0 0 374 499 hsistretch H 50 200 0 0 374 499 hsistretch S 40 60 0 0 374 499 hsistretch I 20 180
